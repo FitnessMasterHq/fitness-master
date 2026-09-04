@@ -1,1 +1,1 @@
-const NUTRITION={proteinTarget:'140–185 g/gün',principles:['Protein hedefini günlük toplam alım olarak takip et.','Hedefe göre enerji alımını bulk / recomp / cut şeklinde ayarla.','Master Bar günlük makro hesabına dahil edilir.']};
+window.NUTRITION={proteinTarget:'140–185 g/gün',principles:['Protein hedefini günlük toplam alım olarak takip et.','Hedefe göre enerji alımını bulk / recomp / cut şeklinde ayarla.','Master Bar günlük makro hesabına dahil edilir.']};
