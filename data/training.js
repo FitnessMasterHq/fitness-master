@@ -1,33 +1,31 @@
-const TRAINING = {
-  Push:{focus:"Chest • Shoulders • Triceps", exercises:[
-    ["Incline Dumbbell Press","3 × 6–10","RIR 2","120 sec","https://www.youtube.com/results?search_query=incline+dumbbell+press+proper+technique"],
-    ["Machine Chest Press","3 × 8–12","RIR 1–2","120 sec","https://www.youtube.com/results?search_query=machine+chest+press+proper+technique"],
-    ["Cable Lateral Raise","3 × 10–15","RIR 1–2","60–90 sec","https://www.youtube.com/results?search_query=cable+lateral+raise+proper+technique"],
-    ["Overhead Cable Triceps Extension","3 × 10–15","RIR 1–2","60–90 sec","https://www.youtube.com/results?search_query=overhead+cable+triceps+extension+proper+technique"]
-  ]},
-  Pull:{focus:"Back • Rear Delts • Biceps", exercises:[
-    ["Lat Pulldown","3 × 6–10","RIR 2","120 sec","https://www.youtube.com/results?search_query=lat+pulldown+proper+technique"],
-    ["Chest-Supported Row","3 × 8–12","RIR 1–2","120 sec","https://www.youtube.com/results?search_query=chest+supported+row+proper+technique"],
-    ["Cable Rear-Delt Fly","3 × 12–15","RIR 1–2","60–90 sec","https://www.youtube.com/results?search_query=cable+rear+delt+fly+proper+technique"],
-    ["Incline Dumbbell Curl","3 × 8–12","RIR 1–2","60–90 sec","https://www.youtube.com/results?search_query=incline+dumbbell+curl+proper+technique"]
-  ]},
-  Legs:{focus:"Quads • Glutes • Hamstrings • Calves", exercises:[
-    ["Back Squat","4 × 6–8","RIR 2","150–180 sec","https://www.youtube.com/results?search_query=back+squat+technique+Alan+Thrall"],
-    ["Romanian Deadlift","3 × 8–10","RIR 2","150 sec","https://www.youtube.com/results?search_query=romanian+deadlift+proper+technique"],
-    ["Leg Press","3 × 8–12","RIR 1–2","120 sec","https://www.youtube.com/results?search_query=leg+press+proper+technique"],
-    ["Booty Builder","3 × 10–15","RIR 1–2","90 sec","https://www.youtube.com/results?search_query=booty+builder+machine+proper+technique"],
-    ["Seated Leg Curl","3 × 10–15","RIR 1–2","90 sec","https://www.youtube.com/results?search_query=seated+leg+curl+proper+technique"],
-    ["Standing Calf Raise","3 × 8–15","RIR 1–2","60–90 sec","https://www.youtube.com/results?search_query=standing+calf+raise+proper+technique"]
-  ]},
-  Core:{focus:"Trunk strength • Anti-extension • Anti-rotation", exercises:[
-    ["Cable Crunch","3 × 10–15","RIR 1–2","60–90 sec","https://www.youtube.com/results?search_query=cable+crunch+proper+technique"],
-    ["Pallof Press","3 × 10–15/side","RIR 2","60 sec","https://www.youtube.com/results?search_query=pallof+press+proper+technique"],
-    ["Dead Bug","3 × 8–12/side","Controlled","60 sec","https://www.youtube.com/results?search_query=dead+bug+proper+technique"]
-  ]},
-  "Zone 2":{focus:"Aerobic base • Recovery • Health", exercises:[
-    ["Zone 2 Cardio","30–45 min","Conversational pace","—","https://www.youtube.com/results?search_query=zone+2+cardio+explained"]
-  ]},
-  HIIT:{focus:"Short conditioning stimulus", exercises:[
-    ["Bike Intervals","6–8 rounds","Hard / easy intervals","—","https://www.youtube.com/results?search_query=stationary+bike+HIIT+intervals"]
-  ]}
+const EXERCISES={
+"Light Cardio":{category:"Isınma / Cardio",primary:"Genel",secondary:"Kardiyorespiratuvar sistem",sets:"3 dk",rir:"Kolay",setRest:"—",exerciseRest:"—",tech:"Konuşma temposunda hafif tempo; amaç ısınmak, yorulmak değil.",videos:["https://www.youtube.com/results?search_query=upper+body+warm+up+cardio"]},
+"Band/Cable External Rotation":{category:"Isınma / Mobilite",primary:"Rotator cuff",secondary:"Infraspinatus • Teres minor",sets:"1 × 12 / taraf",rir:"4–5",setRest:"—",exerciseRest:"30–45 sn",tech:"Dirseği gövdeye yakın sabitle; dış rotasyonu kontrollü yap.",videos:["https://www.youtube.com/results?search_query=band+external+rotation+proper+technique"]},
+"Face Pull":{category:"Isınma / Omuz",primary:"Rear Delts",secondary:"External rotators • Mid traps",sets:"1 × 15",rir:"4–5",setRest:"—",exerciseRest:"30–45 sn",tech:"İpi yüz hizasına çek; omuzları yukarı kaldırmadan kontrollü çalış.",videos:["https://www.youtube.com/results?search_query=face+pull+proper+technique","https://www.youtube.com/results?search_query=face+pull+renaissance+periodization"]},
+"Incline Dumbbell Press":{category:"Göğüs",primary:"Upper Chest",secondary:"Front Delts • Triceps",sets:"3 × 6–10",rir:"1–2",setRest:"2 dk",exerciseRest:"90–120 sn",tech:"Bench 30–45°. Kürek kemiklerini sabitle, kontrollü indir ve göğüs üstüne doğru press et.",videos:["https://www.youtube.com/watch?v=GHcAIiL9J_Y","https://www.youtube.com/results?search_query=incline+dumbbell+press+renaissance+periodization","https://www.youtube.com/results?search_query=incline+dumbbell+press+jeff+nippard"]},
+"Machine Chest Press":{category:"Göğüs",primary:"Chest",secondary:"Front Delts • Triceps",sets:"3 × 8–12",rir:"1–2",setRest:"2 dk",exerciseRest:"90–120 sn",tech:"Koltuk yüksekliğini tutacaklar orta göğüs hizasında olacak şekilde ayarla; omuzları öne düşürmeden press et.",videos:["https://www.youtube.com/results?search_query=machine+chest+press+proper+technique","https://www.youtube.com/results?search_query=machine+chest+press+fitness+first"]},
+"Cable Lateral Raise":{category:"Omuz",primary:"Lateral Delts",secondary:"Upper Traps",sets:"3 × 12–20",rir:"1–2",setRest:"60–90 sn",exerciseRest:"60–90 sn",tech:"Dirseği hafif bükülü tut; kolu kontrollü omuz hizasına kaldır.",videos:["https://www.youtube.com/results?search_query=cable+lateral+raise+proper+technique","https://www.youtube.com/results?search_query=cable+lateral+raise+renaissance+periodization"]},
+"Seated Machine Shoulder Press":{category:"Omuz",primary:"Front/Side Delts",secondary:"Triceps",sets:"2 × 8–12",rir:"1–2",setRest:"90–120 sn",exerciseRest:"90 sn",tech:"Sırtı pedden ayırmadan press et; ağrısız açıklıkta çalış.",videos:["https://www.youtube.com/results?search_query=machine+shoulder+press+proper+technique","https://www.youtube.com/results?search_query=seated+machine+shoulder+press+technique"]},
+"Cable Fly / Pec Deck":{category:"Göğüs",primary:"Chest",secondary:"Front Delts",sets:"2 × 10–15",rir:"1–2",setRest:"60–90 sn",exerciseRest:"60–90 sn",tech:"Dirsek açısını koru; göğüs kasını kısaltarak kolları kontrollü birleştir.",videos:["https://www.youtube.com/results?search_query=cable+fly+proper+technique","https://www.youtube.com/results?search_query=pec+deck+proper+technique"]},
+"Rope Triceps Pushdown":{category:"Triceps",primary:"Triceps",secondary:"Anconeus",sets:"3 × 8–15",rir:"1–2",setRest:"60–90 sn",exerciseRest:"60–90 sn",tech:"Dirsekleri sabit tut; sadece dirsek ekleminden açıp kapat.",videos:["https://www.youtube.com/results?search_query=rope+triceps+pushdown+proper+technique","https://www.youtube.com/results?search_query=triceps+pushdown+renaissance+periodization"]},
+"Overhead Cable Triceps Extension":{category:"Triceps",primary:"Triceps — long head",secondary:"Lateral/medial heads",sets:"2 × 10–15",rir:"1–2",setRest:"60–90 sn",exerciseRest:"60–90 sn",tech:"Dirsekleri mümkün olduğunca sabit tut; üst pozisyonda kontrollü gerilim koru.",videos:["https://www.youtube.com/results?search_query=overhead+cable+triceps+extension+proper+technique","https://www.youtube.com/results?search_query=overhead+rope+triceps+extension+technique"]},
+"Cable Crunch":{category:"Core",primary:"Rectus Abdominis",secondary:"Obliques",sets:"3 × 8–15",rir:"1–2",setRest:"60–90 sn",exerciseRest:"60–90 sn",tech:"Kalçadan değil gövdeyi kontrollü fleksiyona getirerek kabloyu aşağı çek.",videos:["https://www.youtube.com/results?search_query=cable+crunch+proper+technique","https://www.youtube.com/results?search_query=cable+crunch+renaissance+periodization"]},
+"Pallof Press":{category:"Core",primary:"Obliques",secondary:"Deep core • Trunk stabilizers",sets:"2 × 10–15 / taraf",rir:"1–2",setRest:"60–90 sn",exerciseRest:"60–90 sn",tech:"Kabloya dik dur; press sırasında gövdenin dönmesine izin verme.",videos:["https://www.youtube.com/results?search_query=pallof+press+proper+technique","https://www.youtube.com/results?search_query=pallof+press+technique"]},
+"Zone 2 Walking":{category:"Cardio",primary:"Aerobic base",secondary:"Recovery • Health",sets:"25–45 dk",rir:"Konuşma temposu",setRest:"—",exerciseRest:"—",tech:"Konuşabilecek kadar rahat tempo. HR ve kişisel Zone 2 aralığıyla takip edilir.",videos:["https://www.youtube.com/results?search_query=zone+2+cardio+explained"]},
+"Stationary / Upright Bike":{category:"Cardio",primary:"Aerobic base",secondary:"Quads • Calves",sets:"25–45 dk",rir:"Zone 2",setRest:"—",exerciseRest:"—",tech:"Sele yüksekliğini ayarla; kadansı rahat ve sürdürülebilir tut.",videos:["https://www.youtube.com/results?search_query=stationary+bike+proper+setup"]},
+"Recumbent Bike (Yatay Bisiklet)":{category:"Cardio",primary:"Aerobic base",secondary:"Quads • Glutes",sets:"25–45 dk",rir:"Zone 2",setRest:"—",exerciseRest:"—",tech:"Sırtı destekle; pedalı akıcı şekilde çevir. Düşük eklem yükü için uygundur.",videos:["https://www.youtube.com/results?search_query=recumbent+bike+proper+setup"]},
+"Air Bike":{category:"Cardio / HIIT",primary:"Aerobic / Anaerobic",secondary:"Full Body",sets:"6–10 interval",rir:"Hard / easy",setRest:"—",exerciseRest:"—",tech:"HIIT'te çalışma ve toparlanma aralıklarını önceden belirle; teknik bozulunca bitir.",videos:["https://www.youtube.com/results?search_query=air+bike+HIIT+proper+technique"]},
+"StairMaster":{category:"Cardio",primary:"Quads • Glutes",secondary:"Calves",sets:"20–35 dk",rir:"Zone 2",setRest:"—",exerciseRest:"—",tech:"Tırabzana asılmadan dik dur; adımları kontrollü ve ritmik sürdür.",videos:["https://www.youtube.com/results?search_query=stairmaster+proper+technique"]},
+"Rower":{category:"Cardio",primary:"Full Body",secondary:"Back • Legs",sets:"20–40 dk",rir:"Zone 2",setRest:"—",exerciseRest:"—",tech:"Sıra: bacak → gövde → kollar; dönüşte kollar → gövde → bacaklar.",videos:["https://www.youtube.com/results?search_query=rowing+machine+proper+technique"]},
+"Sled Push":{category:"Conditioning",primary:"Quads • Glutes",secondary:"Calves • Core",sets:"4–8 × 15–30 m",rir:"Teknik",setRest:"60–120 sn",exerciseRest:"90 sn",tech:"Gövdeyi öne eğ, adımları kısa ve güçlü tut; mesafe ve yükü ayrı kaydet.",videos:["https://www.youtube.com/results?search_query=sled+push+proper+technique"]},
+"Farmer Carry":{category:"Conditioning / Carry",primary:"Trunk",secondary:"Grip • Traps • Legs",sets:"2–4 × 20–40 m",rir:"Teknik",setRest:"60–90 sn",exerciseRest:"—",tech:"Dik yürü; kaburgaları pelvis üzerinde tut ve tutuşu koru.",videos:["https://www.youtube.com/results?search_query=farmer+carry+proper+technique"]}
 };
+const TRAINING={
+"Push 1":{focus:"Chest • Shoulders • Triceps",exercises:["Incline Dumbbell Press","Machine Chest Press","Cable Lateral Raise","Overhead Cable Triceps Extension"]},
+"Pull 1":{focus:"Back • Rear Delts • Biceps",exercises:[]},
+"Legs 1":{focus:"Quads • Glutes • Hamstrings • Calves",exercises:[]},
+"Push 2":{focus:"Chest • Shoulders • Triceps",warmup:["Light Cardio","Band/Cable External Rotation","Face Pull","Incline Dumbbell Press"],exercises:["Incline Dumbbell Press","Machine Chest Press","Cable Lateral Raise","Seated Machine Shoulder Press","Cable Fly / Pec Deck","Rope Triceps Pushdown","Overhead Cable Triceps Extension"],core:["Cable Crunch","Pallof Press"]},
+"Pull 2":{focus:"Back • Rear Delts • Biceps • Core",exercises:[]},
+"Legs 2":{focus:"Glutes • Hamstrings • Quads • Calves",exercises:[]}
+};
+const PROGRAM_ORDER=["Push 1","Pull 1","Legs 1","Push 2","Pull 2","Legs 2"];

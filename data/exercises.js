@@ -1,1 +1,1 @@
-const EXERCISES = Object.fromEntries(Object.values(TRAINING).flatMap(x=>x.exercises).map(e=>[e[0],e]));
+// Exercise Library is generated from the central EXERCISES master database in training.js.
