@@ -1,4 +1,4 @@
-window.EXERCISES = {
+const EXERCISES = {
 "Light Cardio":{category:"Isınma / Cardio",primary:"Genel",secondary:"Kardiyorespiratuvar sistem",sets:"3–5 dk",rir:"Kolay",setRest:"—",exerciseRest:"30–45 sn",tech:"Bisiklet, eliptik veya treadmill. Konuşma rahatlığında kolay tempo; amaç ısınmak, yorulmak değil.",videos:[]},
 "Band/Cable External Rotation":{category:"Isınma / Mobilite",primary:"Rotator cuff",secondary:"Infraspinatus • Teres minor",sets:"1 × 10–12 / taraf",rir:"4–5",setRest:"—",exerciseRest:"30–45 sn",tech:"Dirseği gövdeye yakın sabitle. Çok hafif direnç kullan; önkolu dışa kontrollü döndür, omuzu yukarı kaldırma.",videos:[["Catalyst Athletics — Band External Rotation","https://www.catalystathletics.com/exercise/916/Band-External-Rotation/","Teknik rehber"],["Catalyst Athletics — External Rotation + Press","https://www.catalystathletics.com/exercise/760/Band-External-Rotation-Press/","Alternatif hazırlık"]]},
 "Face Pull":{category:"Isınma / Omuz",primary:"Rear delts",secondary:"External rotators • Mid traps",sets:"1 × 12–15",rir:"4–5",setRest:"—",exerciseRest:"30–45 sn",tech:"İpi yüz hizasına çek. Dirsekleri geriye alırken omuzları kulaklara yükseltme; dönüşü kontrollü yap.",videos:[["Renaissance Periodization — Face Pull Mistakes","https://www.youtube.com/watch?v=cc0tasCalHg","Teknik / hata düzeltme"],["Renaissance Periodization — Complete Shoulder Workout","https://www.youtube.com/watch?v=XHsEUJso6zk","Face pull tekniği / alternatif açı"]]},
@@ -27,7 +27,7 @@ window.EXERCISES = {
 "Hammer Curl":{category:"Biceps",primary:"Brachialis • Brachioradialis",secondary:"Biceps",sets:"2 × 10–15",rir:"1–2",setRest:"60–75 sn",exerciseRest:"60 sn",tech:"Nötr tutuşu koru; dirsekleri öne taşımadan kontrollü curl yap.",videos:[["Jeff Nippard — Hammer Curl","https://www.youtube.com/watch?v=zC3nLlEvin4","Teknik"]]},
 "Suitcase Carry":{category:"Core / Carry",primary:"Obliques / anti-lateral flexion",secondary:"Grip • Traps",sets:"2 × 20–40 m / taraf",rir:"Teknik",setRest:"60–75 sn",exerciseRest:"—",tech:"Tek elde yük taşırken gövdeyi yana eğme. Kaburgaları pelvis üzerinde tut ve kontrollü yürü.",videos:[]}
 };
-window.TRAINING={
+const TRAINING={
 "Push 1":{focus:"Göğüs • Omuz • Triceps",warmup:[],exercises:[],core:[]},
 "Pull 1":{focus:"Sırt • Arka omuz • Biceps",warmup:[],exercises:[],core:[]},
 "Legs 1":{focus:"Quadriceps • Glute • Hamstring • Calf",warmup:[],exercises:[],core:[]},
@@ -35,4 +35,4 @@ window.TRAINING={
 "Pull 2":{focus:"Sırt • Arka omuz • Biceps",warmup:["Light Cardio","Face Pull"],exercises:["Lat Pulldown","Chest-Supported Row","Single-Arm Cable Row","Reverse Pec Deck","Incline Dumbbell Curl","Hammer Curl","Suitcase Carry"],core:[]},
 "Legs 2":{focus:"Glute • Hamstring • Quadriceps • Calf",warmup:[],exercises:[],core:[]}
 };
-window.PROGRAM_ORDER=["Push 1","Pull 1","Legs 1","Push 2","Pull 2","Legs 2"];
+const PROGRAM_ORDER=["Push 1","Pull 1","Legs 1","Push 2","Pull 2","Legs 2"];
