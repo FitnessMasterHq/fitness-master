@@ -1,1 +1,1 @@
-const NUTRITION={proteinTarget:"140–185 g / gün",principles:["Hipertrofi için yeterli protein ve progresif direnç antrenmanı.","Günlük kilo tek ölçümden çok trend olarak değerlendirilir.","Master Bar toplam günlük makroya dahil edilir."]};
+const NUTRITION={proteinTarget:'140–185 g/gün',principles:['Protein hedefini günlük toplam alım olarak takip et.','Hedefe göre enerji alımını bulk / recomp / cut şeklinde ayarla.','Master Bar günlük makro hesabına dahil edilir.']};
