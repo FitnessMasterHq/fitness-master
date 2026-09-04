@@ -2,9 +2,9 @@ const app=document.getElementById('app');
 const DEFAULT={version:5,weight:85,waist:'',logs:[],bodyLogs:[],activities:[],checks:{},lastWorkout:'Legs 1',omronSeeded:false};
 let state=Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('fitnessMaster')||'{}'));
 state.logs=state.logs||[]; state.bodyLogs=state.bodyLogs||[]; state.activities=state.activities||[]; state.checks=state.checks||{};
+const save=()=>localStorage.setItem('fitnessMaster',JSON.stringify(state));
 function seedOmron(){if(state.omronSeeded)return; const exists=state.bodyLogs.some(x=>x.source==='Omron'&&x.dateISO==='2026-08-20T13:37'); if(!exists){state.bodyLogs.push({date:'20.08.2026 13:37',dateISO:'2026-08-20T13:37',weight:'',fat:'23.7',skeletalMuscle:'33.7',waist:'',source:'Omron'});} state.omronSeeded=true; save();}
 seedOmron();
-const save=()=>localStorage.setItem('fitnessMaster',JSON.stringify(state));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const today=()=>new Date().toLocaleDateString('tr-TR');
 function shell(title,body){return `<div class="content"><h2>${title}</h2>${body}</div>`}
