@@ -11,7 +11,7 @@ function migrate(){const s=read();if(Number(s.legacySessionMigrationVersion||0)>
 if(!exact)return false;
 const sessions=Array.isArray(s.workoutSessions)?s.workoutSessions:[];const now=new Date().toISOString();let session=sessions.find(x=>x&&x.id===SESSION_ID);if(!session){session={id:SESSION_ID,date:DATE,workout:WORKOUT,status:'completed',startedAt:'2026-09-04T00:00:00.000Z',completedAt:'2026-09-04T23:59:59.999Z',updatedAt:now,legacy:true};sessions.push(session);}else if(session.workout!==WORKOUT||session.status!=='completed'){session=Object.assign({},session,{workout:WORKOUT,status:'completed',updatedAt:now,legacy:true});const i=sessions.findIndex(x=>x&&x.id===SESSION_ID);if(i>=0)sessions[i]=session;}
 const attached=logs.map(x=>{if(!x||String(x.date)!==DATE)return x;const name=String(x.name||'');return EXPECTED.some(([n])=>n===name)?Object.assign({},x,{sessionId:SESSION_ID,workout:WORKOUT}):x;});
-s.logs=attached;s.workoutSessions=sessions;s.legacySessionMigrationVersion=VERSION;write(s);return true;}
+s.logs=attached;s.workoutSessions=sessions;s.lastWorkout=WORKOUT;s.legacySessionMigrationVersion=VERSION;write(s);return true;}
 function run(){if(migrate())location.reload();}
 window.addEventListener('fm-cloud-sync-ready',run);window.addEventListener('fm-cloud-data-updated',run);
 if(window.FitnessMasterFirebaseSync?.getStatus?.().ready)setTimeout(run,250);
