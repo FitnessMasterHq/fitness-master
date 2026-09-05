@@ -41,8 +41,11 @@
     try{
       const snap=await ref().get(), l=local();
       if(snap.exists&&snap.data().state){
-        const m=merge(l,snap.data().state);localStorage.setItem(KEY,JSON.stringify(m));last=sig(m);
+        const m=merge(l,snap.data().state);
+        localStorage.setItem(KEY,JSON.stringify(m));
+        last=sig(m);
         await ref().set({state:m,schemaVersion:1,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+        if(typeof window.render==='function')window.render('dashboard');
         console.log('Fitness Master: local + cloud merged');
       }else await push();
       window.dispatchEvent(new CustomEvent('fm-cloud-sync-ready',{detail:{uid:uid}}));
@@ -51,6 +54,7 @@
   function init(){
     if(!window.firebase||!firebase.apps||!firebase.apps.length||!firebase.firestore)return;
     db=firebase.firestore();
+    db.enablePersistence({synchronizeTabs:true}).catch(e=>console.warn('Fitness Master Firestore persistence:',e.code||e));
     const wait=()=>{
       if(!window.FitnessMasterAuth||!window.FitnessMasterAuth.auth){setTimeout(wait,250);return;}
       window.FitnessMasterAuth.auth.onAuthStateChanged(u=>{if(u)firstSync(u);else uid=null;});
