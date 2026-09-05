@@ -2,20 +2,17 @@
 (function(){
   'use strict';
   const PROGRAMS={
-    'Push 1':{focus:'Göğüs • Omuz • Triceps',warmup:['Light Cardio','Band/Cable External Rotation','Face Pull'],exercises:['Flat Dumbbell Press','Incline Machine / Smith Press','Machine Lateral Raise','Cable Fly / Pec Deck','Seated Machine Shoulder Press','Cable Triceps Extension','Single-Arm Overhead Cable Extension'],core:['Abdominal Machine','Dead Bug']},
-    'Pull 1':{focus:'Sırt • Arka omuz • Biceps',warmup:['Light Cardio','Scapular Pulldown','Band/Cable External Rotation','Face Pull'],exercises:['Assisted Pull-up / Neutral-Grip Pulldown','High Row Machine','Cable Row — Neutral Grip','Cable Rear-Delt Fly','Preacher / Machine Curl','Cable Bayesian Curl','Farmer Carry'],core:['Pallof Press','Cable Crunch']},
-    'Legs 1':{focus:'Quadriceps • Glute • Hamstring • Calf',warmup:['Light Cardio','Knee-to-Wall','90/90 Hip Rotation','Bodyweight Squat','Hip Hinge'],exercises:['Back Squat','Leg Press','Romanian Deadlift (RDL)','Seated Leg Curl','Leg Extension','Hip Adduction','Hip Abduction','Standing Calf Raise','Seated Calf Raise'],core:['Cable Crunch','Pallof Press']},
-    'Push 2':{focus:'Göğüs • Omuz • Triceps',warmup:['Light Cardio','Band/Cable External Rotation','Face Pull'],exercises:['Incline Dumbbell Press','Machine Chest Press','Cable Lateral Raise','Seated Machine Shoulder Press','Cable Fly / Pec Deck','Rope Triceps Pushdown','Overhead Cable Triceps Extension'],core:['Cable Crunch','Pallof Press']},
-    'Pull 2':{focus:'Sırt • Arka omuz • Biceps',warmup:['Light Cardio','Scapular Pulldown','Face Pull','Band/Cable External Rotation'],exercises:['Lat Pulldown','Chest-Supported Row','Single-Arm Cable Row','Reverse Pec Deck','Incline Dumbbell Curl','Hammer Curl','Suitcase Carry'],core:[]},
-    'Legs 2':{focus:'Glute • Hamstring • Quadriceps • Calf',warmup:['Light Cardio','Banded Glute Bridge','Banded Lateral Walk','90/90 Hip Rotation','Bodyweight Hip Hinge'],exercises:['Hip Thrust / Booty Builder','Hack Squat / Suitable Squat Machine','Bulgarian Split Squat','Seated / Lying Leg Curl','Cable Glute Kickback','Hip Abduction','Leg Extension','Standing Calf Raise','Tibialis Raise'],core:['Hanging Knee Raise','Side Plank']}
+    'Push 1':{focus:'Göğüs • Omuz • Triceps',warmup:['Bike / Elliptical — 4–5 dk çok hafif','Band/Cable External Rotation — 1×12/yan','Scapular Push-Up — 1×10','Flat Dumbbell Press — 2–3 kademeli ramp-up seti'],exercises:['Flat Dumbbell Press','Incline Machine / Smith Press','Machine Lateral Raise','Cable Fly / Pec Deck','Seated Machine Shoulder Press','Cable Triceps Extension','Single-Arm Overhead Cable Extension'],core:['Abdominal Machine','Dead Bug']},
+    'Pull 1':{focus:'Sırt • Arka omuz • Biceps',warmup:['Bike / Elliptical — 4–5 dk çok hafif','Scapular Pulldown — 1×10–12','Band/Cable External Rotation — 1×12/yan','Assisted Pull-up / Neutral-Grip Pulldown — 2–3 kademeli ramp-up seti'],exercises:['Assisted Pull-up / Neutral-Grip Pulldown','High Row Machine','Cable Row — Neutral Grip','Cable Rear-Delt Fly','Preacher / Machine Curl','Cable Bayesian Curl','Farmer Carry'],core:['Pallof Press','Cable Crunch']},
+    'Legs 1':{focus:'Quadriceps • Glute • Hamstring • Calf',warmup:['Bike — 5 dk çok hafif','Knee-to-Wall — 8/yan','90/90 Hip Rotation — 6/yan','Bodyweight Squat — 8–10','Hip Hinge — 8–10','Back Squat — 3 kademeli ramp-up seti'],exercises:['Back Squat','Leg Press','Romanian Deadlift (RDL)','Seated Leg Curl','Leg Extension','Hip Adduction','Hip Abduction','Standing Calf Raise','Seated Calf Raise'],core:['Cable Crunch','Pallof Press'],postCardio:'Zone 2 — 25–30 dk; yoğunluk cihazındaki gerçek Zone 2 / konuşma testi ile doğrulanacak'},
+    'Push 2':{focus:'Göğüs • Omuz • Triceps',warmup:['Bike / Elliptical — 4–5 dk çok hafif','Band/Cable External Rotation — 1×12/yan','Scapular Push-Up — 1×10','Incline Dumbbell Press — 2–3 kademeli ramp-up seti'],exercises:['Incline Dumbbell Press','Machine Chest Press','Cable Lateral Raise','Seated Machine Shoulder Press','Cable Fly / Pec Deck','Rope Triceps Pushdown','Overhead Cable Triceps Extension'],core:['Cable Crunch','Pallof Press']},
+    'Pull 2':{focus:'Sırt • Arka omuz • Biceps',warmup:['Bike / Elliptical — 4–5 dk çok hafif','Scapular Pulldown — 1×10–12','Band/Cable External Rotation — 1×12/yan','Lat Pulldown — 2–3 kademeli ramp-up seti'],exercises:['Lat Pulldown','Chest-Supported Row','Single-Arm Cable Row','Reverse Pec Deck','Incline Dumbbell Curl','Hammer Curl','Suitcase Carry'],core:[]},
+    'Legs 2':{focus:'Glute • Hamstring • Quadriceps • Calf',warmup:['Bike — 5 dk çok hafif','Banded Glute Bridge — 10','Banded Lateral Walk — 8/yan','90/90 Hip Rotation — 6/yan','Bodyweight Hip Hinge — 8–10','Hip Thrust / Booty Builder — 2–3 kademeli ramp-up seti'],exercises:['Hip Thrust / Booty Builder','Hack Squat / Suitable Squat Machine','Bulgarian Split Squat','Seated / Lying Leg Curl','Cable Glute Kickback','Hip Abduction','Leg Extension','Standing Calf Raise','Tibialis Raise'],core:['Hanging Knee Raise','Side Plank'],postCardio:'Zone 2 — 25–30 dk; yoğunluk cihazındaki gerçek Zone 2 / konuşma testi ile doğrulanacak'}
   };
   const ORDER=Object.keys(PROGRAMS);
   const NORMALIZE=s=>String(s||'').toLowerCase().replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
   function esc(s){return String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));}
   function card(name,log){return (window.EXERCISES&&EXERCISES[name])?exerciseCard(name,!!log):`<div class="exercise"><div class="exercise-head"><h3>${esc(name)}</h3></div><p class="muted">Bu hareket programda tanımlı; Exercise Library kaydı henüz tamamlanmamış.</p></div>`;}
-
-  // Program is driven by the user's actual latest workout, not by a fixed calendar/default.
-  // Example: if the latest saved session is Push 2, opening Program shows Push 2.
   function latestWorkoutFromHistory(){
     try{
       const state=JSON.parse(localStorage.getItem('fitnessMaster')||'{}');
@@ -38,7 +35,6 @@
       return bestScore?best:(state.lastWorkout&&PROGRAMS[state.lastWorkout]?state.lastWorkout:ORDER[0]);
     }catch(e){return ORDER[0];}
   }
-
   function programPage(name){
     const x=PROGRAMS[name]||PROGRAMS[ORDER[0]];
     return `<div class="content"><h2>Program</h2>
@@ -48,6 +44,7 @@
       <h3 class="section-title">1. ISINMA</h3>${x.warmup.map(n=>card(n,false)).join('')}
       <h3 class="section-title">2. ANA ANTRENMAN</h3>${x.exercises.map(n=>card(n,false)).join('')}
       ${x.core.length?`<h3 class="section-title">3. CORE</h3>${x.core.map(n=>card(n,false)).join('')}`:''}
+      ${x.postCardio?`<h3 class="section-title">4. CARDIO</h3><div class="panel"><b>${esc(x.postCardio)}</b></div>`:''}
     </div>`;
   }
   function show(name){const app=document.getElementById('app');if(!app)return;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page==='program'));const selected=name||latestWorkoutFromHistory();app.innerHTML=programPage(selected);const sel=document.getElementById('programSelect');if(sel)sel.onchange=()=>show(sel.value);}
