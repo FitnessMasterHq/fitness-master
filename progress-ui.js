@@ -3,10 +3,7 @@
   'use strict';
   const KEY='fitnessMaster';
   const esc=s=>String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
-  const aliases={
-    'Incline Dumbbell Press':'Incline DB Press',
-    'Cable Fly / Pec Deck':'Cable Fly/Pec Deck'
-  };
+  const aliases={'Incline Dumbbell Press':'Incline DB Press','Cable Fly / Pec Deck':'Cable Fly/Pec Deck'};
   const groups={
     'Push 1':['Flat Dumbbell Press','Incline Machine / Smith Press','Machine Lateral Raise','Cable Fly / Pec Deck','Seated Machine Shoulder Press','Cable Triceps Extension','Single-Arm Overhead Cable Extension','Abdominal Machine','Dead Bug'],
     'Pull 1':['Assisted Pull-up / Neutral-Grip Pulldown','High Row Machine','Cable Row — Neutral Grip','Cable Rear-Delt Fly','Preacher / Machine Curl','Cable Bayesian Curl','Farmer Carry','Pallof Press','Cable Crunch'],
@@ -25,13 +22,12 @@
   };
   function normalize(n){return aliases[n]||n;}
   function inferWorkout(logs){
-    let best='Antrenman',score=-1;
-    Object.keys(groups).forEach(g=>{let score=logs.filter(x=>groups[g].some(n=>normalize(n)===x.name)).length;if(score>score){best=g;score=score;}});
+    let best='Antrenman',bestScore=-1;
+    Object.keys(groups).forEach(g=>{const groupScore=logs.filter(x=>groups[g].some(n=>normalize(n)===x.name)).length;if(groupScore>bestScore){best=g;bestScore=groupScore;}});
     return best;
   }
   function detail(logs){
-    const by={};
-    logs.forEach(x=>{const n=x.name;(by[n]||(by[n]=[])).push(x);});
+    const by={};logs.forEach(x=>{const n=x.name;(by[n]||(by[n]=[])).push(x);});
     return Object.keys(by).map(name=>{
       const sets=by[name].sort((a,b)=>Number(a.set||0)-Number(b.set||0));
       const summary=sets.map(x=>`${esc(x.kg||'—')}×${esc(x.reps||'—')} @${esc(x.rir===''||x.rir==null?'—':x.rir)}`).join('  |  ');
@@ -39,28 +35,21 @@
     }).join('');
   }
   function render(){
-    const app=document.getElementById('app');
-    if(!app)return;
+    const app=document.getElementById('app');if(!app)return;
     let s={};try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){s={};}
-    const logs=Array.isArray(s.logs)?s.logs:[];
-    const dates={};
+    const logs=Array.isArray(s.logs)?s.logs:[];const dates={};
     logs.forEach(x=>{const d=x.date||'Tarihsiz';(dates[d]||(dates[d]=[])).push(x);});
     const workoutCards=Object.keys(dates).sort((a,b)=>b.localeCompare(a)).map(date=>{
-      const dayLogs=dates[date];
-      const workout=inferWorkout(dayLogs);
-      const names=[...new Set(dayLogs.map(x=>x.name))];
-      const sets=new Set(dayLogs.map(x=>[x.name,x.set,x.kg,x.reps,x.rir].join('|'))).size;
+      const dayLogs=dates[date],workout=inferWorkout(dayLogs),names=[...new Set(dayLogs.map(x=>x.name))],sets=new Set(dayLogs.map(x=>[x.name,x.set,x.kg,x.reps,x.rir].join('|'))).size;
       const warm=(warmups[workout]||[]).map(x=>`<span class="progress-chip">${esc(x)}</span>`).join('');
       const zone=workout==='Legs 1'||workout==='Legs 2'?`<div class="progress-block"><div class="progress-block-title">4. ZONE 2</div><div class="progress-zone2">25–30 dk · Zone 2 · HR hedefi: 126–138 bpm</div></div>`:'';
       return `<div class="panel progress-workout"><div class="progress-workout-head"><div><div class="eyebrow">${esc(date)}</div><h3>${esc(workout)}</h3></div><div class="summary-pill">${names.length} hareket • ${sets} set</div></div><details class="progress-section"><summary>1. ISINMA</summary><div class="progress-chips">${warm||'<span class="muted">Program kaydı yok</span>'}</div></details><div class="progress-block"><div class="progress-block-title">2–3. HAREKETLER + CORE</div>${detail(dayLogs)}</div>${zone}</div>`;
     }).join('')||'<div class="panel muted">Henüz kayıt yok.</div>';
-    app.innerHTML=`<div class="content"><h2>Progress</h2><p class="muted">Antrenmanlar tarih ve grup halinde tutulur. Bir hareketin detayını açtığında set, kg, tekrar ve RIR özeti görünür.</p>${workoutCards}<h3 class="section-title">Vücut Kompozisyonu</h3><div class="panel">${(s.bodyLogs||[]).length? (s.bodyLogs||[]).slice().reverse().map(x=>`<div class="activity-card"><b>${esc(x.date)}</b><span>${esc(x.weight||'—')} kg · Yağ ${esc(x.fat||'—')}% · Kas ${esc(x.skeletalMuscle||'—')}%</span></div>`).join(''):'<span class="muted">Henüz body log yok.</span>'}</div></div>`;
+    app.innerHTML=`<div class="content"><h2>Progress</h2><p class="muted">Antrenmanlar tarih ve grup halinde tutulur. Hareketi açtığında set, kg, tekrar ve RIR özeti görünür.</p>${workoutCards}<h3 class="section-title">Vücut Kompozisyonu</h3><div class="panel">${(s.bodyLogs||[]).length?(s.bodyLogs||[]).slice().reverse().map(x=>`<div class="activity-card"><b>${esc(x.date)}</b><span>${esc(x.weight||'—')} kg · Yağ ${esc(x.fat||'—')}% · Kas ${esc(x.skeletalMuscle||'—')}%</span></div>`).join(''):'<span class="muted">Henüz body log yok.</span>'}</div></div>`;
   }
   function install(){
-    const nav=document.querySelector('.nav');
-    if(!nav)return;
-    const p=nav.querySelector('[data-page="progress"]');
-    if(p){p.addEventListener('click',()=>setTimeout(render,0));}
+    const nav=document.querySelector('.nav');if(!nav)return;const p=nav.querySelector('[data-page="progress"]');
+    if(p)p.addEventListener('click',()=>setTimeout(render,0));
     window.addEventListener('fm-cloud-sync-ready',()=>setTimeout(()=>{if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();},50));
     window.addEventListener('fm-cloud-data-updated',()=>setTimeout(()=>{if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();},50));
     if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();
