@@ -1,0 +1,10 @@
+{
+  "name": "Fitness Master",
+  "short_name": "Fitness Master",
+  "description": "Personal Fitness System",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#111827",
+  "lang": "tr"
+}
