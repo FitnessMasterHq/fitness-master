@@ -4,6 +4,7 @@
 function read(){try{return JSON.parse(localStorage.getItem('fitnessMaster')||'{}');}catch(e){return {};}}
 function save(s){localStorage.setItem('fitnessMaster',JSON.stringify(s));if(window.FitnessMasterFirebaseSync?.pushNow)window.FitnessMasterFirebaseSync.pushNow();}
 function id(){return crypto?.randomUUID?crypto.randomUUID():('set-'+Date.now()+'-'+Math.random().toString(36).slice(2));}
+function session(){const w=document.body.dataset.fmWorkout||window.FitnessMasterTraining?.nextWorkout?.()||'';const d=new Date().toLocaleDateString('tr-TR');const sid=window.FitnessMasterTraining?.ensureSession?window.FitnessMasterTraining.ensureSession(w)?.id:(w?`session-${String(d).replace(/[^0-9]/g,'')}-${w.replace(/\s+/g,'-').toLowerCase()}`:'');return {workout:w,sessionId:sid,date:d};}
 function install(){
  if(window.__setLogEditInstalled)return;
  document.addEventListener('click',function(e){
@@ -30,10 +31,11 @@ function install(){
   if(b.dataset.saved==='1'){e.preventDefault();e.stopImmediatePropagation();return;}
   if(!kg&&!reps&&!rir){e.preventDefault();e.stopImmediatePropagation();return;}
   e.preventDefault();e.stopImmediatePropagation();
-  const s=read(),logs=Array.isArray(s.logs)?s.logs:[],date=new Date().toLocaleDateString('tr-TR'),name=b.dataset.name,set=b.dataset.set;
-  let existing=logs.find(x=>String(x.date)===date&&String(x.name)===name&&String(x.set)===String(set));
-  if(existing){b.dataset.logId=existing.id||(existing.id=id());existing.kg=kg;existing.reps=reps;existing.rir=rir;existing.updatedAt=new Date().toISOString();}
-  else{existing={id:id(),date,name,set,kg,reps,rir,createdAt:new Date().toISOString()};logs.push(existing);b.dataset.logId=existing.id;}
+  const s=read(),logs=Array.isArray(s.logs)?s.logs:[],ctx=session(),name=b.dataset.name,set=b.dataset.set;
+  let existing=logs.find(x=>String(x.sessionId||'')===String(ctx.sessionId)&&String(x.name)===name&&String(x.set)===String(set));
+  if(!existing){existing=logs.find(x=>String(x.date)===ctx.date&&String(x.name)===name&&String(x.set)===String(set)&&(!x.sessionId||String(x.workout)===String(ctx.workout)));}
+  if(existing){if(!existing.id)existing.id=id();existing.kg=kg;existing.reps=reps;existing.rir=rir;existing.sessionId=existing.sessionId||ctx.sessionId;existing.workout=existing.workout||ctx.workout;existing.updatedAt=new Date().toISOString();b.dataset.logId=existing.id;}
+  else{existing={id:id(),date:ctx.date,name,set,kg,reps,rir,workout:ctx.workout,sessionId:ctx.sessionId,createdAt:new Date().toISOString()};logs.push(existing);b.dataset.logId=existing.id;}
   s.logs=logs;save(s);
   b.dataset.saved='1';b.disabled=true;b.textContent='Kaydedildi ✓';box.querySelectorAll('input[data-k]').forEach(x=>x.disabled=true);
   b.insertAdjacentHTML('afterend','<button type="button" class="btn small edit-set">Düzelt</button>');
