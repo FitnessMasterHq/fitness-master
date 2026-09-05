@@ -18,15 +18,17 @@
 <nav class="nav">
 <button class="nav-btn active" data-page="dashboard">Dashboard</button><button class="nav-btn" data-page="training">Training</button><button class="nav-btn" data-page="activities">Activities</button><button class="nav-btn" data-page="progress">Progress</button><button class="nav-btn" data-page="nutrition">Nutrition</button><button class="nav-btn" data-page="recovery">Recovery</button><button class="nav-btn" data-page="library">Exercise Library</button>
 </nav>
-<main id="app"></main><footer>Fitness Master • Local-first • v5</footer>
+<main id="app"></main><footer>Fitness Master • Local-first • v6</footer>
 
-<!-- Firebase compat SDK: kept as classic scripts so the existing app.js architecture remains unchanged. -->
+<!-- Firebase compat SDKs. Firebase web API keys are public by design; Firestore access is enforced by Security Rules. -->
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
 <script src="data/training.js"></script>
 <script src="data/nutrition.js"></script>
-<script src="app.js?v=7"></script>
-<script src="firebase-auth.js?v=7"></script>
+<script src="app.js?v=8"></script>
+<script src="firebase-auth.js?v=8"></script>
+<script src="firebase-sync.js?v=1"></script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(e=>console.error("Service Worker:",e)));
