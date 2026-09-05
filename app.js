@@ -1,7 +1,9 @@
 const app=document.getElementById('app');
 const DEFAULT={version:5,weight:85,waist:'',logs:[],bodyLogs:[],activities:[],checks:{},lastWorkout:'Legs 1',omronSeeded:false};
 let state=Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('fitnessMaster')||'{}'));
-state.logs=[]; state.activities=[]; state.bodyLogs=[]; state.checks={};
+state.logs=state.logs||[]; state.activities=state.activities||[]; state.bodyLogs=state.bodyLogs||[]; state.checks=state.checks||{};
+// Progress reset: keep only the clean baseline weight. Never trust stale local/cloud test values.
+state.logs=[]; state.activities=[]; state.bodyLogs=[]; state.checks={}; state.weight=85; state.waist='';
 const save=()=>localStorage.setItem('fitnessMaster',JSON.stringify(state));
 function seedOmron(){if(state.omronSeeded)return;state.omronSeeded=true;save();}
 seedOmron();
