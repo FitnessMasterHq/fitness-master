@@ -1,7 +1,6 @@
-const CACHE="fitness-master-v8";
+const CACHE="fitness-master-v9";
 const CORE=[
-  "./","./index.html","./style.css","./app.js",
-  "./firebase-auth.js","./firebase-sync.js","./data/training.js","./data/nutrition.js",
+  "./","./index.html","./style.css?v=2","./app.js?v=10","./program-page.js?v=1","./firebase-auth.js?v=8","./firebase-sync.js?v=2","./omron-upload.js?v=2","./data/training.js","./data/nutrition.js",
   "./manifest.json","./assets/omron-2026-08-20.png"
 ];
 
@@ -16,7 +15,7 @@ self.addEventListener("fetch", e => {
   const url=new URL(e.request.url);
   if(url.origin !== self.location.origin) return;
   const p=url.pathname;
-  if(p.endsWith("/firebase-auth.js")||p.endsWith("/firebase-sync.js")||p.endsWith("/app.js")||p.endsWith("/index.html")){
+  if(p.endsWith("/firebase-auth.js")||p.endsWith("/firebase-sync.js")||p.endsWith("/app.js")||p.endsWith("/index.html")||p.endsWith("/omron-upload.js")||p.endsWith("/style.css")||p.endsWith("/program-page.js")){
     e.respondWith(fetch(e.request,{cache:"no-store"}).then(r=>{
       if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));}
       return r;
