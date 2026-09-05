@@ -1,9 +1,13 @@
 const app=document.getElementById('app');
 const DEFAULT={version:5,weight:85,waist:'',logs:[],bodyLogs:[],activities:[],checks:{},lastWorkout:'Legs 1',omronSeeded:false,dataResetVersion:2};
 let state=Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('fitnessMaster')||'{}'));
-// One-time clean baseline: remove all old/test Progress data on every device, while preserving the app/program itself.
-if(state.dataResetVersion!==2){state.logs=[];state.activities=[];state.bodyLogs=[];state.checks={};state.weight=85;state.waist='';state.dataResetVersion=2;}
-state.logs=[]; state.activities=[]; state.bodyLogs=[]; state.checks={}; state.weight=85; state.waist=''; state.dataResetVersion=2;
+state.logs=state.logs||[]; state.bodyLogs=state.bodyLogs||[]; state.activities=state.activities||[]; state.checks=state.checks||{};
+// One-time cleanup: remove only accidental/test Progress data while preserving the real Push 2 session.
+if((state.dataResetVersion||0)<3){
+  state.logs=[{date:'04.09.2026',name:'Incline DB Press',set:'1',kg:'10',reps:'15',rir:'5'},{date:'04.09.2026',name:'Incline DB Press',set:'2',kg:'12',reps:'12',rir:'5'},{date:'04.09.2026',name:'Incline DB Press',set:'3',kg:'14',reps:'12',rir:'3'},{date:'04.09.2026',name:'Machine Chest Press',set:'1',kg:'25',reps:'13',rir:'3'},{date:'04.09.2026',name:'Machine Chest Press',set:'2',kg:'30',reps:'11',rir:'1'},{date:'04.09.2026',name:'Machine Chest Press',set:'3',kg:'30',reps:'8',rir:''},{date:'04.09.2026',name:'Cable Lateral Raise',set:'1',kg:'2.5',reps:'12',rir:'5'},{date:'04.09.2026',name:'Cable Lateral Raise',set:'2',kg:'5',reps:'10',rir:'0'},{date:'04.09.2026',name:'Cable Lateral Raise',set:'3',kg:'2.5',reps:'12',rir:'5'},{date:'04.09.2026',name:'Seated Machine Shoulder Press',set:'1',kg:'10',reps:'15',rir:'5'},{date:'04.09.2026',name:'Seated Machine Shoulder Press',set:'2',kg:'17.5',reps:'9',rir:'3'},{date:'04.09.2026',name:'Cable Fly/Pec Deck',set:'1',kg:'10',reps:'12',rir:'3'},{date:'04.09.2026',name:'Cable Fly/Pec Deck',set:'2',kg:'10',reps:'12',rir:'3'},{date:'04.09.2026',name:'Rope Triceps Pushdown',set:'1',kg:'13',reps:'15',rir:'5'},{date:'04.09.2026',name:'Rope Triceps Pushdown',set:'2',kg:'16.5',reps:'10',rir:'1'},{date:'04.09.2026',name:'Rope Triceps Pushdown',set:'3',kg:'9.5',reps:'10',rir:''},{date:'04.09.2026',name:'Overhead Cable Triceps Extension',set:'1',kg:'10',reps:'10',rir:'1'},{date:'04.09.2026',name:'Overhead Cable Triceps Extension',set:'2',kg:'10',reps:'10',rir:'1'},{date:'04.09.2026',name:'Cable Crunch',set:'1',kg:'35',reps:'12',rir:'2'},{date:'04.09.2026',name:'Cable Crunch',set:'2',kg:'35',reps:'12',rir:'1'},{date:'04.09.2026',name:'Cable Crunch',set:'3',kg:'35',reps:'12',rir:'1'},{date:'04.09.2026',name:'Pallof Press',set:'1',kg:'5',reps:'15',rir:'3'},{date:'04.09.2026',name:'Pallof Press',set:'2',kg:'5',reps:'15',rir:'3'}];
+  state.bodyLogs=[]; state.activities=[]; state.checks={}; state.weight=85; state.waist=''; state.dataResetVersion=3;
+  localStorage.setItem('fitnessMaster',JSON.stringify(state));
+}
 const save=()=>localStorage.setItem('fitnessMaster',JSON.stringify(state));
 function seedOmron(){if(state.omronSeeded)return;state.omronSeeded=true;save();}
 seedOmron();
