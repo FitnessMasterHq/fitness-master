@@ -1,0 +1,38 @@
+/* Fitness Master — Previous near-failure load reference. */
+(function(){
+  'use strict';
+  function dateValue(d){
+    const p=String(d||'').split(/[.\/-]/).map(Number);
+    return p.length===3 && p.every(Number.isFinite) ? new Date(p[2],p[1]-1,p[0]).getTime() : 0;
+  }
+  function previousNearFailure(name){
+    const state=window.state;
+    const logs=Array.isArray(state?.logs)?state.logs:[];
+    const dates=[...new Set(logs.filter(x=>String(x.name||'')===name).map(x=>String(x.date||'')).filter(Boolean))]
+      .sort((a,b)=>dateValue(b)-dateValue(a));
+    for(const date of dates){
+      const candidates=logs.filter(x=>String(x.name||'')===name && String(x.date||'')===date)
+        .filter(x=>x.rir!=='' && x.rir!=null && Number.isFinite(Number(x.rir)) && Number(x.rir)<=1 && Number.isFinite(Number(x.kg)) && Number(x.kg)>0);
+      if(candidates.length){
+        const best=candidates.reduce((a,x)=>Number(x.kg)>Number(a.kg)?x:a,candidates[0]);
+        return {date,kg:Number(best.kg),rir:Number(best.rir),reps:best.reps};
+      }
+    }
+    return null;
+  }
+  function install(){
+    if(typeof window.exerciseCard!=='function' || window.__previousLoadReferenceInstalled)return;
+    const original=window.exerciseCard;
+    window.exerciseCard=function(name,log){
+      const html=original(name,log);
+      if(!log)return html;
+      const prev=previousNearFailure(name);
+      if(!prev)return html;
+      const note=`<div class="panel previous-load-reference"><b>Önceki seans yüksek yük referansı:</b> ${prev.kg} kg · ${prev.reps||'—'} tekrar · RIR ${prev.rir} <span class="muted">(${prev.date})</span><br><span class="muted">İlk setten önce bak: hedef, bu yükte daha iyi tekrar/RIR veya teknik bozulmadan küçük bir yük artışı.</span></div>`;
+      return html.replace('<div class="set-log">',note+'<div class="set-log">');
+    };
+    window.__previousLoadReferenceInstalled=true;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+  window.addEventListener('fm-cloud-data-updated',install);
+})();
