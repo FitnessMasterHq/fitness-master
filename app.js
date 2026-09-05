@@ -1,9 +1,9 @@
 const app=document.getElementById('app');
-const DEFAULT={version:5,weight:85,waist:'',logs:[],bodyLogs:[],activities:[],checks:{},lastWorkout:'Legs 1',omronSeeded:false};
+const DEFAULT={version:5,weight:85,waist:'',logs:[],bodyLogs:[],activities:[],checks:{},lastWorkout:'Legs 1',omronSeeded:false,dataResetVersion:2};
 let state=Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('fitnessMaster')||'{}'));
-state.logs=state.logs||[]; state.activities=state.activities||[]; state.bodyLogs=state.bodyLogs||[]; state.checks=state.checks||{};
-// Progress reset: keep only the clean baseline weight. Never trust stale local/cloud test values.
-state.logs=[]; state.activities=[]; state.bodyLogs=[]; state.checks={}; state.weight=85; state.waist='';
+// One-time clean baseline: remove all old/test Progress data on every device, while preserving the app/program itself.
+if(state.dataResetVersion!==2){state.logs=[];state.activities=[];state.bodyLogs=[];state.checks={};state.weight=85;state.waist='';state.dataResetVersion=2;}
+state.logs=[]; state.activities=[]; state.bodyLogs=[]; state.checks={}; state.weight=85; state.waist=''; state.dataResetVersion=2;
 const save=()=>localStorage.setItem('fitnessMaster',JSON.stringify(state));
 function seedOmron(){if(state.omronSeeded)return;state.omronSeeded=true;save();}
 seedOmron();
