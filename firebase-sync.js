@@ -2,6 +2,7 @@
 (function(){
   'use strict';
   const KEY='fitnessMaster';
+  const DEFAULTS={weight:85,waist:'',lastWorkout:'Legs 1',version:5,omronSeeded:false};
   let db=null, uid=null, busy=false, last='', initialUid=null;
 
   function local(){
@@ -22,10 +23,13 @@
     x.bodyLogs=mergeArray(l&&l.bodyLogs,c&&c.bodyLogs);
     x.activities=mergeArray(l&&l.activities,c&&c.activities);
     x.checks=Object.assign({},(c&&c.checks)||{},(l&&l.checks)||{});
-    ['weight','waist','lastWorkout','version','omronSeeded'].forEach(k=>{
-      if(l&&l[k]!==undefined&&l[k]!==null&&l[k]!=='')x[k]=l[k];
-      else if(c&&c[k]!==undefined)x[k]=c[k];
+    ['weight','waist','lastWorkout','version'].forEach(k=>{
+      const lv=l&&l[k], cv=c&&c[k];
+      if(lv!==undefined&&lv!==null&&lv!==''&&lv!==DEFAULTS[k])x[k]=lv;
+      else if(cv!==undefined)x[k]=cv;
     });
+    const lm=!!(l&&l.omronSeeded), cm=!!(c&&c.omronSeeded);
+    x.omronSeeded=lm||cm;
     return x;
   }
   function ref(){return db.collection('users').doc(uid).collection('appData').doc('state');}
