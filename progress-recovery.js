@@ -1,4 +1,4 @@
-/* Fitness Master — guaranteed recovery of the real Push 2 session */
+/* Fitness Master — canonical Progress recovery: keep only the real Push 2 session */
 (function(){
   'use strict';
   const KEY='fitnessMaster';
@@ -17,18 +17,20 @@
   function restore(){
     let s={}; try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return false;}
     const logs=Array.isArray(s.logs)?s.logs:[];
-    const hasAll=canonical.every(w=>logs.some(x=>x&&x.date===w.date&&x.name===w.name&&String(x.set)===String(w.set)&&String(x.kg)===String(w.kg)&&String(x.reps)===String(w.reps)));
-    if(hasAll)return false;
-    const others=logs.filter(x=>!(x&&x.date==='04.09.2026'&&canonical.some(w=>w.name===x.name)));
-    s.logs=others.concat(canonical);
-    s.dataResetVersion=Math.max(Number(s.dataResetVersion||0),4);
-    s.progressResetVersion=Math.max(Number(s.progressResetVersion||0),4);
+    /* Progress was contaminated by test entries. Until a clean session is recorded,
+       the only authoritative workout history is the real Push 2 session. */
+    const same=(a,b)=>a&&a.date===b.date&&a.name===b.name&&String(a.set)===String(b.set)&&String(a.kg)===String(b.kg)&&String(a.reps)===String(b.reps)&&String(a.rir||'')===String(b.rir||'');
+    const clean=logs.length===canonical.length&&canonical.every(w=>logs.some(x=>same(x,w)));
+    if(clean)return false;
+    s.logs=canonical;
+    s.dataResetVersion=Math.max(Number(s.dataResetVersion||0),5);
+    s.progressResetVersion=Math.max(Number(s.progressResetVersion||0),5);
     localStorage.setItem(KEY,JSON.stringify(s));
     if(window.FitnessMasterFirebaseSync&&window.FitnessMasterFirebaseSync.pushNow) setTimeout(()=>window.FitnessMasterFirebaseSync.pushNow(),150);
     if(typeof window.render==='function')window.render('progress');
     return true;
   }
   restore();
-  window.addEventListener('fm-cloud-sync-ready',()=>setTimeout(restore,250));
-  window.addEventListener('fm-cloud-data-updated',()=>setTimeout(restore,250));
+  window.addEventListener('fm-cloud-sync-ready',()=>setTimeout(restore,300));
+  window.addEventListener('fm-cloud-data-updated',()=>setTimeout(restore,300));
 })();
