@@ -1,58 +1,22 @@
-/* Fitness Master — Progress UI: grouped by date/workout, expandable exercise details */
+/* Fitness Master — Progress UI: ID-based set records, grouped by date/workout */
 (function(){
-  'use strict';
-  const KEY='fitnessMaster';
-  const esc=s=>String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
-  const aliases={'Incline Dumbbell Press':'Incline DB Press','Cable Fly / Pec Deck':'Cable Fly/Pec Deck'};
-  const groups={
-    'Push 1':['Flat Dumbbell Press','Incline Machine / Smith Press','Machine Lateral Raise','Cable Fly / Pec Deck','Seated Machine Shoulder Press','Cable Triceps Extension','Single-Arm Overhead Cable Extension','Abdominal Machine','Dead Bug'],
-    'Pull 1':['Assisted Pull-up / Neutral-Grip Pulldown','High Row Machine','Cable Row — Neutral Grip','Cable Rear-Delt Fly','Preacher / Machine Curl','Cable Bayesian Curl','Farmer Carry','Pallof Press','Cable Crunch'],
-    'Legs 1':['Back Squat','Leg Press','Romanian Deadlift (RDL)','Seated Leg Curl','Leg Extension','Hip Adduction','Hip Abduction','Standing Calf Raise','Seated Calf Raise','Cable Crunch','Pallof Press'],
-    'Push 2':['Incline Dumbbell Press','Machine Chest Press','Cable Lateral Raise','Seated Machine Shoulder Press','Cable Fly / Pec Deck','Rope Triceps Pushdown','Overhead Cable Triceps Extension','Cable Crunch','Pallof Press'],
-    'Pull 2':['Lat Pulldown','Chest-Supported Row','Single-Arm Cable Row','Reverse Pec Deck','Incline Dumbbell Curl','Hammer Curl','Suitcase Carry'],
-    'Legs 2':['Hip Thrust / Booty Builder','Hack Squat / Suitable Squat Machine','Bulgarian Split Squat','Seated / Lying Leg Curl','Cable Glute Kickback','Hip Abduction','Leg Extension','Standing Calf Raise','Tibialis Raise','Hanging Knee Raise','Side Plank']
-  };
-  const warmups={
-    'Push 1':['Light Cardio','Band/Cable External Rotation','Face Pull'],
-    'Pull 1':['Light Cardio','Scapular Pulldown','Band/Cable External Rotation','Face Pull'],
-    'Legs 1':['Light Cardio','Knee-to-Wall','90/90 Hip Rotation','Bodyweight Squat','Hip Hinge'],
-    'Push 2':['Light Cardio','Band/Cable External Rotation','Face Pull'],
-    'Pull 2':['Light Cardio','Scapular Pulldown','Face Pull','Band/Cable External Rotation'],
-    'Legs 2':['Light Cardio','Banded Glute Bridge','Banded Lateral Walk','90/90 Hip Rotation','Bodyweight Hip Hinge']
-  };
-  function normalize(n){return aliases[n]||n;}
-  function inferWorkout(logs){
-    let best='Antrenman',bestScore=-1;
-    Object.keys(groups).forEach(g=>{const groupScore=logs.filter(x=>groups[g].some(n=>normalize(n)===x.name)).length;if(groupScore>bestScore){best=g;bestScore=groupScore;}});
-    return best;
-  }
-  function detail(logs){
-    const by={};logs.forEach(x=>{const n=x.name;(by[n]||(by[n]=[])).push(x);});
-    return Object.keys(by).map(name=>{
-      const sets=by[name].sort((a,b)=>Number(a.set||0)-Number(b.set||0));
-      const summary=sets.map(x=>`${esc(x.kg||'—')}×${esc(x.reps||'—')} @${esc(x.rir===''||x.rir==null?'—':x.rir)}`).join('  |  ');
-      return `<details class="progress-exercise"><summary><b>${esc(name)}</b><span>${summary}</span></summary><div class="progress-set-detail">${sets.map((x,i)=>`<div><b>Set ${i+1}</b> · ${esc(x.kg||'—')} kg × ${esc(x.reps||'—')} · RIR ${esc(x.rir===''||x.rir==null?'—':x.rir)}</div>`).join('')}</div></details>`;
-    }).join('');
-  }
-  function render(){
-    const app=document.getElementById('app');if(!app)return;
-    let s={};try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){s={};}
-    const logs=Array.isArray(s.logs)?s.logs:[];const dates={};
-    logs.forEach(x=>{const d=x.date||'Tarihsiz';(dates[d]||(dates[d]=[])).push(x);});
-    const workoutCards=Object.keys(dates).sort((a,b)=>b.localeCompare(a)).map(date=>{
-      const dayLogs=dates[date],workout=inferWorkout(dayLogs),names=[...new Set(dayLogs.map(x=>x.name))],sets=new Set(dayLogs.map(x=>[x.name,x.set,x.kg,x.reps,x.rir].join('|'))).size;
-      const warm=(warmups[workout]||[]).map(x=>`<span class="progress-chip">${esc(x)}</span>`).join('');
-      const zone=workout==='Legs 1'||workout==='Legs 2'?`<div class="progress-block"><div class="progress-block-title">4. ZONE 2</div><div class="progress-zone2">25–30 dk · Zone 2 · HR hedefi: 126–138 bpm</div></div>`:'';
-      return `<div class="panel progress-workout"><div class="progress-workout-head"><div><div class="eyebrow">${esc(date)}</div><h3>${esc(workout)}</h3></div><div class="summary-pill">${names.length} hareket • ${sets} set</div></div><details class="progress-section"><summary>1. ISINMA</summary><div class="progress-chips">${warm||'<span class="muted">Program kaydı yok</span>'}</div></details><div class="progress-block"><div class="progress-block-title">2–3. HAREKETLER + CORE</div>${detail(dayLogs)}</div>${zone}</div>`;
-    }).join('')||'<div class="panel muted">Henüz kayıt yok.</div>';
-    app.innerHTML=`<div class="content"><h2>Progress</h2><p class="muted">Antrenmanlar tarih ve grup halinde tutulur. Hareketi açtığında set, kg, tekrar ve RIR özeti görünür.</p>${workoutCards}<h3 class="section-title">Vücut Kompozisyonu</h3><div class="panel">${(s.bodyLogs||[]).length?(s.bodyLogs||[]).slice().reverse().map(x=>`<div class="activity-card"><b>${esc(x.date)}</b><span>${esc(x.weight||'—')} kg · Yağ ${esc(x.fat||'—')}% · Kas ${esc(x.skeletalMuscle||'—')}%</span></div>`).join(''):'<span class="muted">Henüz body log yok.</span>'}</div></div>`;
-  }
-  function install(){
-    const nav=document.querySelector('.nav');if(!nav)return;const p=nav.querySelector('[data-page="progress"]');
-    if(p)p.addEventListener('click',()=>setTimeout(render,0));
-    window.addEventListener('fm-cloud-sync-ready',()=>setTimeout(()=>{if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();},50));
-    window.addEventListener('fm-cloud-data-updated',()=>setTimeout(()=>{if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();},50));
-    if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+'use strict';
+const KEY='fitnessMaster';
+const esc=s=>String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+const aliases={'Incline Dumbbell Press':'Incline DB Press','Cable Fly / Pec Deck':'Cable Fly/Pec Deck'};
+const groups={
+'Push 1':['Flat Dumbbell Press','Incline Machine / Smith Press','Machine Lateral Raise','Cable Fly / Pec Deck','Seated Machine Shoulder Press','Cable Triceps Extension','Single-Arm Overhead Cable Extension','Abdominal Machine','Dead Bug'],
+'Pull 1':['Assisted Pull-up / Neutral-Grip Pulldown','High Row Machine','Cable Row — Neutral Grip','Cable Rear-Delt Fly','Preacher / Machine Curl','Cable Bayesian Curl','Farmer Carry','Pallof Press','Cable Crunch'],
+'Legs 1':['Back Squat','Leg Press','Romanian Deadlift (RDL)','Seated Leg Curl','Leg Extension','Hip Adduction','Hip Abduction','Standing Calf Raise','Seated Calf Raise','Cable Crunch','Pallof Press'],
+'Push 2':['Incline Dumbbell Press','Machine Chest Press','Cable Lateral Raise','Seated Machine Shoulder Press','Cable Fly / Pec Deck','Rope Triceps Pushdown','Overhead Cable Triceps Extension','Cable Crunch','Pallof Press'],
+'Pull 2':['Lat Pulldown','Chest-Supported Row','Single-Arm Cable Row','Reverse Pec Deck','Incline Dumbbell Curl','Hammer Curl','Suitcase Carry'],
+'Legs 2':['Hip Thrust / Booty Builder','Hack Squat / Suitable Squat Machine','Bulgarian Split Squat','Seated / Lying Leg Curl','Cable Glute Kickback','Hip Abduction','Leg Extension','Standing Calf Raise','Tibialis Raise','Hanging Knee Raise','Side Plank']};
+const warmups={'Push 1':['Light Cardio','Band/Cable External Rotation','Face Pull'],'Pull 1':['Light Cardio','Scapular Pulldown','Band/Cable External Rotation','Face Pull'],'Legs 1':['Light Cardio','Knee-to-Wall','90/90 Hip Rotation','Bodyweight Squat','Hip Hinge'],'Push 2':['Light Cardio','Band/Cable External Rotation','Face Pull'],'Pull 2':['Light Cardio','Scapular Pulldown','Face Pull','Band/Cable External Rotation'],'Legs 2':['Light Cardio','Banded Glute Bridge','Banded Lateral Walk','90/90 Hip Rotation','Bodyweight Hip Hinge']};
+function normalize(n){return aliases[n]||n;}
+function ensureIds(logs){let changed=false;const out=logs.map((x,i)=>{if(x&&x.id)return x;changed=true;return Object.assign({},x,{id:'legacy-'+[x.date||'',x.name||'',x.set||'',i].join('-')});});return {logs:out,changed};}
+function inferWorkout(logs){let best='Antrenman',score=-1;Object.keys(groups).forEach(g=>{const n=logs.filter(x=>groups[g].some(v=>normalize(v)===x.name)).length;if(n>score){best=g;score=n;}});return best;}
+function detail(logs){const by={};logs.forEach(x=>{const n=x.name;(by[n]||(by[n]=[])).push(x);});return Object.keys(by).map(name=>{const sets=by[name].slice().sort((a,b)=>Number(a.set||0)-Number(b.set||0));const summary=sets.map(x=>`${esc(x.kg||'—')}×${esc(x.reps||'—')} @${esc(x.rir===''||x.rir==null?'—':x.rir)}`).join('  |  ');return `<details class="progress-exercise"><summary><b>${esc(name)}</b><span>${summary}</span></summary><div class="progress-set-detail">${sets.map((x,i)=>`<div><b>Set ${esc(x.set||i+1)}</b> · ${esc(x.kg||'—')} kg × ${esc(x.reps||'—')} · RIR ${esc(x.rir===''||x.rir==null?'—':x.rir)} <small>· ID ${esc(x.id)}</small></div>`).join('')}</div></details>`;}).join('');}
+function render(){const app=document.getElementById('app');if(!app)return;let s={};try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}let logs=Array.isArray(s.logs)?s.logs:[];const normalized=ensureIds(logs);if(normalized.changed){logs=normalized.logs;s.logs=logs;localStorage.setItem(KEY,JSON.stringify(s));}const dates={};logs.forEach(x=>{const d=x.date||'Tarihsiz';(dates[d]||(dates[d]=[])).push(x);});const cards=Object.keys(dates).sort((a,b)=>b.localeCompare(a)).map(date=>{const day=dates[date],workout=inferWorkout(day),names=[...new Set(day.map(x=>x.name))],ids=new Set(day.map(x=>x.id));const warm=(warmups[workout]||[]).map(x=>`<span class="progress-chip">${esc(x)}</span>`).join('');const zone=workout==='Legs 1'||workout==='Legs 2'?`<div class="progress-block"><div class="progress-block-title">4. ZONE 2</div><div class="progress-zone2">25–30 dk · Zone 2 · cihaz/talk-test ile doğrula</div></div>`:'';return `<div class="panel progress-workout"><div class="progress-workout-head"><div><div class="eyebrow">${esc(date)}</div><h3>${esc(workout)}</h3></div><div class="summary-pill">${names.length} hareket • ${ids.size} set</div></div><details class="progress-section"><summary>1. ISINMA</summary><div class="progress-chips">${warm||'<span class="muted">Program kaydı yok</span>'}</div></details><div class="progress-block"><div class="progress-block-title">2–3. HAREKETLER + CORE</div>${detail(day)}</div>${zone}</div>`;}).join('')||'<div class="panel muted">Henüz kayıt yok.</div>';app.innerHTML=`<div class="content"><h2>Progress</h2><p class="muted">Her set tekil ID ile saklanır. Aynı set tekrar kaydedilmez; düzeltme aynı kaydı günceller.</p>${cards}<h3 class="section-title">Vücut Kompozisyonu</h3><div class="panel">${(s.bodyLogs||[]).length?(s.bodyLogs||[]).slice().reverse().map(x=>`<div class="activity-card"><b>${esc(x.date)}</b><span>${esc(x.weight||'—')} kg · Yağ ${esc(x.fat||'—')}% · Kas ${esc(x.skeletalMuscle||'—')}%</span></div>`).join(''):'<span class="muted">Henüz body log yok.</span>'}</div></div>`;}
+function install(){const nav=document.querySelector('.nav');if(!nav)return;const p=nav.querySelector('[data-page="progress"]');if(p)p.addEventListener('click',()=>setTimeout(render,0));window.addEventListener('fm-cloud-sync-ready',()=>setTimeout(()=>{if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();},50));window.addEventListener('fm-cloud-data-updated',()=>setTimeout(()=>{if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();},50));if(document.querySelector('.nav-btn.active')?.dataset.page==='progress')render();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
