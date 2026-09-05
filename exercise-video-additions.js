@@ -1,2 +1,12 @@
 /* Additional directly verified expert video resources. */
-(function(){'use strict';if(typeof EXERCISES==='undefined')return;const add=(n,v)=>{EXERCISES[n].videos=(EXERCISES[n].videos||[]).concat([v]);};add('Leg Press',['Renaissance Periodization — Leg Press','https://www.youtube.com/watch?v=yZmx_Ac3880','yan/3⁄4 açı • temel teknik','kısa teknik']);add('Incline Dumbbell Curl',['Renaissance Periodization — Incline Dumbbell Curl','https://www.youtube.com/watch?v=aTYlqC_JacQ','ön/yan açı • biceps ROM','kısa teknik']);add('Reverse Pec Deck',['Renaissance Periodization — Machine Reverse Fly','https://www.youtube.com/watch?v=5YK4bgzXDp0','ön/3⁄4 açı • arka omuz','kısa teknik']);add('Single-Arm Cable Row',['One Coaching — Bench Supported Single Arm Cable Row','https://youtu.be/f27lST6Fgzc','yan açı • gövde sabitleme','kısa teknik']);})();
+(function(){
+'use strict';
+if(typeof EXERCISES==='undefined')return;
+const add=(n,v)=>{if(!EXERCISES[n])return;EXERCISES[n].videos=(EXERCISES[n].videos||[]).concat([v]);};
+add('Leg Press',['Renaissance Periodization — Leg Press','https://www.youtube.com/watch?v=yZmx_Ac3880','yan/3⁄4 açı • temel teknik','kısa teknik']);
+add('Incline Dumbbell Curl',['Renaissance Periodization — Incline Dumbbell Curl','https://www.youtube.com/watch?v=aTYlqC_JacQ','ön/yan açı • biceps ROM','kısa teknik']);
+add('Reverse Pec Deck',['Renaissance Periodization — Machine Reverse Fly','https://www.youtube.com/watch?v=5YK4bgzXDp0','ön/3⁄4 açı • arka omuz','kısa teknik']);
+add('Single-Arm Cable Row',['One Coaching — Bench Supported Single Arm Cable Row','https://youtu.be/f27lST6Fgzc','yan açı • gövde sabitleme','kısa teknik']);
+add('Preacher / Machine Curl',['Renaissance Periodization — Machine Preacher Curl','https://www.youtube.com/watch?v=Ja6ZlIDONac','ön/3⁄4 açı • kol sabitleme','kısa teknik']);
+add('Seated Leg Curl',['Renaissance Periodization — Seated Leg Curl','https://www.youtube.com/watch?v=Orxowest56U','yan/3⁄4 açı • diz/pelvis ayarı','kısa teknik']);
+})();
