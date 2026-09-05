@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const KEY='fitnessMaster';
-  let db=null, uid=null, busy=false, last='';
+  let db=null, uid=null, busy=false, last='', initialUid=null;
 
   function local(){
     try{return JSON.parse(localStorage.getItem(KEY)||'{}');}
@@ -37,7 +37,8 @@
     finally{busy=false;}
   }
   async function firstSync(user){
-    uid=user.uid;
+    if(!user||initialUid===user.uid)return;
+    initialUid=user.uid; uid=user.uid;
     try{
       const snap=await ref().get(), l=local();
       if(snap.exists&&snap.data().state){
@@ -49,7 +50,7 @@
         console.log('Fitness Master: local + cloud merged');
       }else await push();
       window.dispatchEvent(new CustomEvent('fm-cloud-sync-ready',{detail:{uid:uid}}));
-    }catch(e){console.error('Fitness Master Firestore initial sync:',e);}
+    }catch(e){initialUid=null;console.error('Fitness Master Firestore initial sync:',e);}
   }
   function init(){
     if(!window.firebase||!firebase.apps||!firebase.apps.length||!firebase.firestore)return;
@@ -57,7 +58,10 @@
     db.enablePersistence({synchronizeTabs:true}).catch(e=>console.warn('Fitness Master Firestore persistence:',e.code||e));
     const wait=()=>{
       if(!window.FitnessMasterAuth||!window.FitnessMasterAuth.auth){setTimeout(wait,250);return;}
-      window.FitnessMasterAuth.auth.onAuthStateChanged(u=>{if(u)firstSync(u);else uid=null;});
+      window.FitnessMasterAuth.auth.onAuthStateChanged(u=>{
+        if(u)firstSync(u);
+        else{uid=null;initialUid=null;last='';}
+      });
       if(window.FitnessMasterAuth.auth.currentUser)firstSync(window.FitnessMasterAuth.auth.currentUser);
     };
     wait();
