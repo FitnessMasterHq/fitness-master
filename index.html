@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <title>Fitness Master</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <header class="topbar">
@@ -18,7 +18,7 @@
 <nav class="nav">
 <button class="nav-btn active" data-page="dashboard">Dashboard</button><button class="nav-btn" data-page="program">Program</button><button class="nav-btn" data-page="training">Training</button><button class="nav-btn" data-page="activities">Activities</button><button class="nav-btn" data-page="progress">Progress</button><button class="nav-btn" data-page="nutrition">Nutrition</button><button class="nav-btn" data-page="recovery">Recovery</button><button class="nav-btn" data-page="library">Exercise Library</button>
 </nav>
-<main id="app"></main><footer>Fitness Master • Local-first • v8</footer>
+<main id="app"></main><footer>Fitness Master • Local-first • v9</footer>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
@@ -28,7 +28,7 @@
 <script src="program-page.js?v=1"></script>
 <script src="firebase-auth.js?v=8"></script>
 <script src="firebase-sync.js?v=2"></script>
-<script src="omron-upload.js?v=1"></script>
+<script src="omron-upload.js?v=2"></script>
 <script>
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(e=>console.error("Service Worker:",e)));}
 </script>
