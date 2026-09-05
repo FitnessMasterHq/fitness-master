@@ -1,51 +1,104 @@
-/* Fitness Master — Firebase Authentication (Google) */
-(function(){
-  const firebaseConfig={
-    apiKey:"AIzaSyDdg6HVSbQPdfoBhu66Gb_1Z70_qxV1Iac",
-    authDomain:"fitness-master-bf1cb.firebaseapp.com",
-    projectId:"fitness-master-bf1cb",
-    storageBucket:"fitness-master-bf1cb.firebasestorage.app",
-    messagingSenderId:"402564407304",
-    appId:"1:402564407304:web:1cad321e40c4b6b0c9b1bd"
+/* Fitness Master — Firebase Google Authentication v3
+   Uses popup sign-in for GitHub Pages compatibility.
+*/
+(function () {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDdg6HVSbQPdfoBhu66Gb_1Z70_qxV1Iac",
+    authDomain: "fitness-master-bf1cb.firebaseapp.com",
+    projectId: "fitness-master-bf1cb",
+    storageBucket: "fitness-master-bf1cb.firebasestorage.app",
+    messagingSenderId: "402564407304",
+    appId: "1:402564407304:web:1cad321e40c4b6b0c9b1bd"
   };
 
-  if(typeof firebase==="undefined"){
-    console.error("Firebase SDK yüklenemedi.");
-    return;
+  function showAuthError(err) {
+    console.error("Firebase Auth:", err);
+    const old = document.getElementById("fm-auth-error");
+    if (old) old.remove();
+
+    const el = document.createElement("div");
+    el.id = "fm-auth-error";
+    el.style.cssText =
+      "position:fixed;top:70px;right:20px;z-index:9999;max-width:420px;" +
+      "padding:12px 14px;border:1px solid #c00;border-radius:10px;" +
+      "background:#fff;color:#111;box-shadow:0 4px 20px rgba(0,0,0,.15);font-size:14px;";
+    el.innerHTML =
+      "<strong>Google girişi başarısız.</strong><br>" +
+      (err && err.message ? err.message : "Bilinmeyen Firebase hatası.");
+    document.body.appendChild(el);
   }
 
-  firebase.initializeApp(firebaseConfig);
-  const auth=firebase.auth();
-  window.FitnessMasterAuth=auth;
-  auth.useDeviceLanguage();
+  function start() {
+    if (!window.firebase || !firebase.apps) {
+      showAuthError({message:"Firebase SDK yüklenemedi."});
+      return;
+    }
 
-  const topbar=document.querySelector(".topbar");
-  if(!topbar)return;
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    auth.useDeviceLanguage();
 
-  const box=document.createElement("div");
-  box.id="authBox";
-  box.className="auth-box";
-  topbar.appendChild(box);
+    const topbar = document.querySelector(".topbar") || document.body;
+    let btn = document.getElementById("fm-google-login");
 
-  const provider=new firebase.auth.GoogleAuthProvider();
-  provider.setCustomParameters({prompt:"select_account"});
+    function render(user) {
+      if (!btn) return;
+      if (user) {
+        const name = user.displayName || user.email || "Google hesabı";
+        btn.textContent = name + "  •  Çıkış";
+        btn.title = user.email || "";
+        btn.dataset.signedIn = "1";
+      } else {
+        btn.textContent = "Google ile Giriş";
+        btn.title = "";
+        btn.dataset.signedIn = "0";
+      }
+    }
 
-  function renderSignedOut(){
-    box.innerHTML='<button id="googleSignIn" class="btn auth-btn">Google ile Giriş</button>';
-    document.getElementById("googleSignIn").onclick=async()=>{
-      const b=document.getElementById("googleSignIn");
-      b.disabled=true;b.textContent="Giriş yapılıyor…";
-      try{await auth.signInWithRedirect(provider)}
-      catch(e){console.error(e);b.disabled=false;b.textContent="Google ile Giriş";alert("Google ile giriş yapılamadı: "+(e.message||e.code))}
-    };
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.id = "fm-google-login";
+      btn.type = "button";
+      btn.style.cssText =
+        "margin-left:10px;padding:8px 12px;border:1px solid #ccc;" +
+        "border-radius:8px;background:#fff;cursor:pointer;font:inherit;";
+      topbar.appendChild(btn);
+    }
+
+    btn.addEventListener("click", async function () {
+      if (auth.currentUser) {
+        await auth.signOut();
+        render(null);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Google açılıyor…";
+
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({prompt: "select_account"});
+        await auth.signInWithPopup(provider);
+      } catch (err) {
+        showAuthError(err);
+        render(auth.currentUser);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    auth.onAuthStateChanged(function (user) {
+      console.log("Fitness Master auth state:", user ? user.email : "signed out");
+      render(user);
+      window.FitnessMasterAuth = {user, auth};
+    });
+
+    render(auth.currentUser);
   }
-  auth.getRedirectResult().catch(e=>{
-    if(e){console.error(e);alert("Google giriş sonucu alınamadı: "+(e.message||e.code))}
-  });
-  auth.onAuthStateChanged(user=>{
-    if(!user){renderSignedOut();return}
-    const name=user.displayName||user.email||"Google hesabı";
-    box.innerHTML='<span class="auth-user">'+String(name).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))+'</span><button id="googleSignOut" class="nav-btn auth-out">Çıkış</button>';
-    document.getElementById("googleSignOut").onclick=()=>auth.signOut();
-  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
 })();
