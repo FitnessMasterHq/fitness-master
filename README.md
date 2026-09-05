@@ -1,23 +1,45 @@
-# Fitness Master — Firebase Login + Offline Patch
+# Fitness Master — Firebase Login + Offline v2
 
-Bu paket mevcut `FitnessMasterHq/fitness-master` projesine uygulanmak üzere hazırlanmıştır.
+Bu paket, mevcut Fitness Master GitHub Pages uygulamasına uygulanmak üzere hazırlanmıştır.
 
-## İçerik
+## Bu sürümde düzeltildi
 
-- `index.html` — Firebase Authentication, manifest ve Service Worker bağlantıları eklendi.
-- `app.js` — mevcut uygulama korunarak `save()` sıralama hatası düzeltildi.
-- `firebase-auth.js` — Google ile giriş / çıkış.
-- `style.css` — mevcut stil + giriş alanı stilleri.
-- `sw.js` — uygulamanın temel dosyalarını offline cache'e alır.
-- `manifest.json` — PWA kurulumu için.
-- `INSTALL.md` — GitHub'a uygulama adımları.
+- Firebase App Compat SDK eklendi.
+- Firebase Auth Compat SDK eklendi.
+- Google ile Giriş butonu `index.html` açılır açılmaz Firebase başlatıldıktan sonra oluşturulur.
+- Google girişinde redirect yöntemi kullanılır.
+- Omron `save()` sıralama hatası düzeltildi.
+- Service Worker ve PWA manifest eklendi.
+- Firestore entegrasyonu YOKTUR; mevcut localStorage kayıtları bu aşamada Firebase'e gönderilmez.
 
-## Önemli
+## GitHub'a yükleme
 
-Bu aşamada **Firestore senkronizasyonu yoktur**. Telefonundaki Fitness Master localStorage verileri otomatik olarak Firebase'e gönderilmez.
+Kök dizindeki mevcut dosyaların üzerine:
+- index.html
+- app.js
+- style.css
 
-Önce Google Login'i doğrulayacağız. Sonraki aşamada localStorage → Firestore geçişini kontrollü ve yedekli şekilde yapacağız.
+Yeni olarak:
+- firebase-auth.js
+- sw.js
+- manifest.json
 
-YouTube gibi harici bağlantılar internet gerektirir. Uygulamanın kendi ekranları ve localStorage verileri ise Service Worker sayesinde offline çalışmaya devam eder.
+eklenmelidir.
 
-Firebase Web API key'in web uygulamalarında istemci tarafında bulunması normaldir; yine de bu dosyayı gereksiz yere paylaşma.
+`data/` klasörüne dokunma.
+
+## Test
+
+GitHub Pages yayınlandıktan sonra:
+1. Siteyi normal internet bağlantısıyla aç.
+2. Sağ üstte `Google ile Giriş` görünmeli.
+3. Google ile giriş yap.
+4. Başarılı olunca ad/e-posta ve `Çıkış` görünür.
+5. Sayfayı yenile; oturum korunmalı.
+
+Google butonu yine görünmüyorsa tarayıcı geliştirici konsolundaki hatayı gönder. Bu durumda özellikle Firebase SDK yükleme sırasını ve Authorized Domains ayarını kontrol ederiz.
+
+## Sonraki aşama
+
+Login doğrulandıktan sonra Firestore'a kontrollü migration yapılacak:
+localStorage → yedek → Firestore → doğrulama → iki cihaz senkronizasyonu.
