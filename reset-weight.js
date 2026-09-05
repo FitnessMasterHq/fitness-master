@@ -1,7 +1,9 @@
 /* Fitness Master — reset temporary test weights to baseline 85 kg */
 (function(){
   'use strict';
+  let done=false;
   function reset(){
+    if(done)return; done=true;
     try{
       const key='fitnessMaster';
       const state=JSON.parse(localStorage.getItem(key)||'{}');
@@ -14,5 +16,6 @@
       if(typeof window.render==='function')window.render('dashboard');
     }catch(e){console.error('Fitness Master weight reset:',e);}
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(reset,700));else setTimeout(reset,700);
+  window.addEventListener('fm-cloud-sync-ready',()=>reset(),{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{if(!done)reset();},2500));else setTimeout(()=>{if(!done)reset();},2500);
 })();
