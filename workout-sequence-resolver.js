@@ -1,7 +1,7 @@
 /* Fitness Master — single source of truth for continuous workout order.
    Canonical order: Push 1 -> Pull 1 -> Legs 1 -> Push 2 -> Pull 2 -> Legs 2 -> repeat.
-   Completed sessions are authoritative. An in-progress session is resumed only when it is
-   the next workout in that sequence; stale/mismatched in-progress records never skip a slot. */
+   Completed sessions are authoritative when available. Legacy lastWorkout is a fallback
+   so an older valid progress state cannot make Training restart at Push 1. */
 (function(){'use strict';
   const O=['Push 1','Pull 1','Legs 1','Push 2','Pull 2','Legs 2'];
   function read(){try{return JSON.parse(localStorage.getItem('fitnessMaster')||'{}');}catch(e){return {};}}
@@ -10,7 +10,10 @@
   function dateValue(d){const p=String(d||'').split(/[.\/-]/).map(Number);return p.length===3&&p.every(Number.isFinite)?new Date(p[2],p[1]-1,p[0]).getTime():0;}
   function completed(){
     const s=read(),a=Array.isArray(s.workoutSessions)?s.workoutSessions:[];
-    return a.filter(x=>x&&x.status==='completed'&&O.includes(x.workout)).sort((a,b)=>time(b.completedAt)-time(a.completedAt)||dateValue(b.date)-dateValue(a.date))[0]||null;
+    const x=a.filter(x=>x&&x.status==='completed'&&O.includes(x.workout)).sort((a,b)=>time(b.completedAt)-time(a.completedAt)||dateValue(b.date)-dateValue(a.date))[0];
+    if(x)return x;
+    const legacy=O.includes(s.lastWorkout)?s.lastWorkout:null;
+    return legacy?{workout:legacy,legacy:true}:null;
   }
   function nextAfter(w){const i=O.indexOf(w);return i<0?O[0]:O[(i+1)%O.length];}
   function inProgressFor(w){
@@ -29,7 +32,7 @@
   }
   function syncLastWorkout(){
     const s=read(),last=completed();
-    if(last&&s.lastWorkout!==last.workout){s.lastWorkout=last.workout;write(s);}
+    if(last&&last.workout&&s.lastWorkout!==last.workout&&!last.legacy){s.lastWorkout=last.workout;write(s);}
     return last?.workout||null;
   }
   function expose(){window.FitnessMasterSequence={ORDER:O,resolve,latestCompleted:completed,nextWorkout:function(){return resolve().workout},syncLastWorkout};syncLastWorkout();}
